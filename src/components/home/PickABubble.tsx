@@ -71,14 +71,16 @@ export function PickABubble() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveBubble(activeBubble === bubble ? null : bubble)}
               >
-                <GlassCard variant="bubble" className="w-32 h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center relative overflow-hidden group border border-white/5 hover:border-white/20 transition-all duration-500 shadow-xl hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+                <GlassCard variant="bubble" className="w-32 h-32 md:w-40 md:h-40 rounded-full relative overflow-hidden group border border-white/5 hover:border-white/20 transition-all duration-500 shadow-xl hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
                   <div className="absolute inset-0 bg-gradient-to-tr from-pastel-blue/10 via-transparent to-pastel-pink/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   {activeBubble === bubble && (
                     <div className="absolute inset-0 bg-white/10 animate-pulse mix-blend-screen pointer-events-none" />
                   )}
-                  <span className="relative z-10 text-[10px] md:text-xs tracking-[0.25em] text-white/70 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-500">
-                    {bubble}
-                  </span>
+                  <div className="flex-1 w-full h-full flex flex-col items-center justify-center">
+                    <span className="relative z-10 text-[10px] md:text-xs tracking-[0.25em] text-white/70 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all duration-500">
+                      {bubble}
+                    </span>
+                  </div>
                 </GlassCard>
               </motion.div>
             </motion.div>
