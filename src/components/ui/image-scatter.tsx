@@ -57,6 +57,7 @@ export function ImageScatter({
       activeCards: [] as { element: HTMLDivElement; centerX: number; centerY: number }[],
       currentSection: 0,
       isAnimating: false,
+      isVisible: false,
     };
 
     function updateViewport() {
@@ -244,7 +245,16 @@ export function ImageScatter({
       });
     }
 
-    intervalId = setInterval(nextSection, 3000); // Auto-play every 3s
+    intervalId = setInterval(() => {
+      if (document.visibilityState === "visible" && state.isVisible) {
+        nextSection();
+      }
+    }, 4000); // Increased interval to 4s for better perf
+
+    const observer = new IntersectionObserver((entries) => {
+      state.isVisible = entries[0].isIntersecting;
+    });
+    if (containerRef.current) observer.observe(containerRef.current);
 
     const handleResize = () => {
       reinitialize();

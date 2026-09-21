@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Heart, X } from "lucide-react";
 import { GlassCard } from "../global/GlassCard";
 
-import { LiquidMetalButton } from "@/components/ui/liquid-metal";
 
 export type SavedItem = {
   id: string;
@@ -50,15 +49,25 @@ export function VaultProvider({ children }: { children: ReactNode }) {
       
       {/* Floating Action Button */}
       <div className="fixed bottom-6 right-6 z-50">
-        <LiquidMetalButton 
+        <button 
           onClick={() => setDrawerOpen(true)}
-          icon={<Heart className={`w-5 h-5 ${savedItems.length > 0 ? "fill-white/80 text-white/80" : "text-white/50"}`} />}
-          size="md"
+          className="relative group cursor-pointer border-none p-0 outline-none transition-transform active:scale-[0.98]"
         >
-          <span className="text-[10px] tracking-widest text-neutral-900 dark:text-white uppercase font-medium">
-            My Archive ({savedItems.length})
-          </span>
-        </LiquidMetalButton>
+          <div className="relative rounded-full overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] p-[1px]">
+            {/* Animated CSS Border Layer */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-white/40 to-white/20 bg-[length:200%_200%] animate-pulse" />
+            
+            {/* Inner Button Body */}
+            <div className="relative z-10 rounded-full flex items-center bg-black/80 backdrop-blur-md transition-colors duration-200 group-hover:bg-neutral-900 py-3 pl-3 pr-8 gap-4 text-base">
+              <div className="rounded-full flex items-center justify-center bg-white/10 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] w-10 h-10">
+                <Heart className={`w-5 h-5 ${savedItems.length > 0 ? "fill-white/80 text-white/80" : "text-white/50"}`} />
+              </div>
+              <span className="text-[10px] tracking-widest text-white uppercase font-medium">
+                My Archive ({savedItems.length})
+              </span>
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* Drawer */}
