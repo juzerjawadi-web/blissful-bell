@@ -1,26 +1,72 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
+import Lenis from "lenis";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
-const MASONRY_ITEMS = [
-  { id: 1, type: "feature", src: "/1760869483602.jpg", title: "THE ESCAPE", location: "MALDIVES", colSpan: "col-span-1 md:col-span-2", aspect: "aspect-[16/9]" },
-  { id: 2, type: "portrait", src: "/IMG_20260630_120523.jpg", title: "MORNING LIGHT", location: "SANTORINI", colSpan: "col-span-1", aspect: "aspect-[3/4]" },
-  { id: 3, type: "portrait", src: "/IMG_20260602_130344.jpg", title: "CITY ECHOES", location: "PARIS", colSpan: "col-span-1", aspect: "aspect-[3/4]" },
-  { id: 4, type: "feature", src: "/20260503_202503.jpg", title: "HIDDEN GEMS", location: "KYOTO", colSpan: "col-span-1 md:col-span-2", aspect: "aspect-[16/9]" },
-  { id: 5, type: "medium", src: "/IMG_20260629_225155.jpg", title: "WILDERNESS", location: "PATAGONIA", colSpan: "col-span-1 md:col-span-2 lg:col-span-1", aspect: "aspect-square" },
-  { id: 6, type: "medium", src: "/girl.png", title: "PORTRAITS", location: "TUSCANY", colSpan: "col-span-1 md:col-span-2 lg:col-span-1", aspect: "aspect-square" }
+// Images mixed to have enough for 4 columns of 3 images (12 images total)
+const ALL_IMAGES = [
+  "/1760869483602.jpg",
+  "/IMG_20260630_120523.jpg",
+  "/IMG_20260602_130344.jpg",
+  "/20260503_202503.jpg",
+  "/IMG_20260629_225155.jpg",
+  "/girl.png",
+  "/boy.png",
+  "/juzer-and-durriya.png",
+  "/IMG_20260616_000622_684.webp",
+  "/20260208_073639.jpg",
+  "/1760869483602.jpg", // repeat to fill
+  "/IMG_20260602_130344.jpg", // repeat to fill
 ];
 
 export function EditorialMasonry() {
+  const gallery = useRef<HTMLDivElement>(null);
+  const [dimension, setDimension] = useState({ width: 0, height: 0 });
+
+  const { scrollYProgress } = useScroll({
+    target: gallery,
+    offset: ["start end", "end start"],
+  });
+
+  const { height } = dimension;
+  const y = useTransform(scrollYProgress, [0, 1], [0, height * 2]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, height * 3.3]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, height * 1.25]);
+  const y4 = useTransform(scrollYProgress, [0, 1], [0, height * 3]);
+
+  useEffect(() => {
+    const lenis = new Lenis();
+
+    const raf = (time: number) => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+
+    const resize = () => {
+      setDimension({ width: window.innerWidth, height: window.innerHeight });
+    };
+
+    window.addEventListener("resize", resize);
+    requestAnimationFrame(raf);
+    resize();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      lenis.destroy();
+    };
+  }, []);
+
   return (
-    <section className="w-full py-24 md:py-32 px-4 relative z-10 bg-black">
-      <div className="max-w-7xl mx-auto">
+    <section className="w-full bg-black text-white relative z-10 overflow-hidden">
+      {/* Title Section */}
+      <div className="w-full max-w-7xl mx-auto px-4 pt-32 pb-16">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8"
         >
           <div>
             <h2 className="text-sm tracking-[0.3em] text-white/50 uppercase mb-4">Curated Archives</h2>
@@ -30,39 +76,44 @@ export function EditorialMasonry() {
             Moments frozen in time across the globe.
           </p>
         </motion.div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {MASONRY_ITEMS.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, delay: (idx % 3) * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className={`relative group overflow-hidden rounded-2xl md:rounded-3xl cursor-none ${item.colSpan} ${item.aspect} bg-white/5`}
-            >
-              <div className="absolute inset-0 w-full h-full overflow-hidden">
-                <Image
-                  src={item.src}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-110 group-hover:brightness-75"
-                />
-              </div>
-              
-              {/* Overlay Content */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                <span className="text-[10px] tracking-[0.3em] text-white/70 uppercase mb-2">
-                  {item.location}
-                </span>
-                <h4 className="text-xl md:text-2xl font-serif text-white font-light">
-                  {item.title}
-                </h4>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+      {/* The Parallax Gallery */}
+      <div
+        ref={gallery}
+        className="relative box-border flex h-[175vh] gap-[2vw] overflow-hidden bg-black p-[2vw]"
+      >
+        <Column images={[ALL_IMAGES[0], ALL_IMAGES[1], ALL_IMAGES[2]]} y={y} />
+        <Column images={[ALL_IMAGES[3], ALL_IMAGES[4], ALL_IMAGES[5]]} y={y2} />
+        <Column images={[ALL_IMAGES[6], ALL_IMAGES[7], ALL_IMAGES[8]]} y={y3} />
+        <Column images={[ALL_IMAGES[9], ALL_IMAGES[10], ALL_IMAGES[11]]} y={y4} />
       </div>
     </section>
   );
 }
+
+type ColumnProps = {
+  images: string[];
+  y: MotionValue<number>;
+};
+
+const Column = ({ images, y }: ColumnProps) => {
+  return (
+    <motion.div
+      className="relative -top-[45%] flex h-full w-1/4 min-w-[250px] flex-col gap-[2vw] first:top-[-45%] [&:nth-child(2)]:top-[-95%] [&:nth-child(3)]:top-[-45%] [&:nth-child(4)]:top-[-75%]"
+      style={{ y }}
+    >
+      {images.map((src, i) => (
+        <div key={i} className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-3xl bg-white/5 shadow-xl">
+          <Image
+            src={src}
+            alt="Gallery image"
+            fill
+            className="pointer-events-none object-cover transition-transform duration-[2000ms] ease-out hover:scale-105 hover:brightness-110"
+            sizes="(max-width: 768px) 100vw, 25vw"
+          />
+        </div>
+      ))}
+    </motion.div>
+  );
+};
