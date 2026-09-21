@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { GlassCard } from "../global/GlassCard";
 
@@ -20,6 +20,7 @@ import Image from "next/image";
 
 function LittleThingCard({ thing }: { thing: { id: number; text: string; image?: string; audio?: string } }) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [isClicked, setIsClicked] = useState(false);
   
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -43,26 +44,39 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
     }
     x.set(0);
     y.set(0);
+    setIsClicked(false);
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newClickedState = !isClicked;
+    setIsClicked(newClickedState);
+    
+    if (newClickedState && audioRef.current) {
+      audioRef.current.play().catch(() => {});
+    } else if (!newClickedState && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
   };
 
   return (
     <div 
-      className="w-full flex justify-center relative group"
+      className="w-full flex justify-center relative group cursor-pointer"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onMouseMove={handleMouseMove}
+      onMouseMove={(e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const xPct = mouseX / width - 0.5;
+        const yPct = mouseY / height - 0.5;
+        x.set(xPct);
+        y.set(yPct);
+      }}
+      onClick={handleClick}
     >
       <GlassCard 
         interactive 
@@ -71,16 +85,22 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
         <span className="text-xs md:text-sm tracking-[0.2em] text-white/80 font-medium whitespace-nowrap">
           {thing.text}
         </span>
-        <span className="text-pastel-pink/50 text-sm group-hover:scale-125 transition-transform duration-500">♡</span>
+        <span className={`text-pastel-pink/50 text-sm transition-transform duration-500 ${isClicked ? "scale-125" : "group-hover:scale-125"}`}>♡</span>
       </GlassCard>
 
       {thing.audio && <audio ref={audioRef} src={thing.audio} preload="auto" />}
 
       {thing.image && (
-        <div className="fixed inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-out z-[9999] flex items-center justify-center perspective-[1200px]">
+        <div 
+          className={`fixed inset-0 pointer-events-none transition-opacity duration-700 ease-out z-[9999] flex items-center justify-center perspective-[1200px] ${
+            isClicked ? "opacity-100" : "opacity-0 md:group-hover:opacity-100"
+          }`}
+        >
           <motion.div 
             style={{ rotateX, rotateY }}
-            className="relative scale-95 group-hover:scale-100 transition-transform duration-700 ease-out"
+            className={`relative transition-transform duration-700 ease-out ${
+              isClicked ? "scale-100" : "scale-95 md:group-hover:scale-100"
+            }`}
           >
             <Image 
               src={thing.image} 
