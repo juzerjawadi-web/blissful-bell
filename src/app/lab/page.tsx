@@ -10,6 +10,7 @@ import { LabAudioPlayer } from "@/components/lab/LabAudioPlayer";
 import TextAnimation from "@/components/ui/staggerText";
 import { AgentBentoGrid } from "@/components/ui/agent-bento-grid";
 import { ImageScatter } from "@/components/ui/image-scatter";
+import { LabCarousel } from "@/components/lab/LabCarousel";
 
 export default function LabPage() {
   const ref = useRef<HTMLDivElement>(null);
@@ -112,9 +113,9 @@ export default function LabPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="pt-16 border-t border-white/10 min-h-screen flex items-center justify-center relative"
+          className="pt-16 border-t border-white/10 min-h-screen flex items-center justify-center relative overflow-hidden"
         >
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 opacity-50">
             <ImageScatter 
               data={[
                 {
@@ -132,6 +133,23 @@ export default function LabPage() {
               ]} 
               className="w-full h-full"
             />
+          </div>
+        </motion.div>
+
+        {/* The Final Carousel */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="pt-24 border-t border-white/10 flex flex-col items-center justify-center relative w-full overflow-hidden"
+        >
+          <div className="text-center mb-16">
+            <h2 className="text-sm tracking-[0.2em] text-white/50 uppercase mb-4">Our Album</h2>
+            <h3 className="text-3xl md:text-5xl font-serif text-white font-light tracking-wide">Timeless Moments</h3>
+          </div>
+          <div className="w-[100vw] relative left-1/2 -translate-x-1/2">
+            <LabCarousel />
           </div>
         </motion.div>
         </div>
