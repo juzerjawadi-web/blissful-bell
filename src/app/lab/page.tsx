@@ -11,6 +11,7 @@ import TextAnimation from "@/components/ui/staggerText";
 import { AgentBentoGrid } from "@/components/ui/agent-bento-grid";
 import { ImageScatter } from "@/components/ui/image-scatter";
 import { LabCarousel } from "@/components/lab/LabCarousel";
+import { LabVideoReel } from "@/components/lab/LabVideoReel";
 
 export default function LabPage() {
   const ref = useRef<HTMLDivElement>(null);
@@ -150,6 +151,23 @@ export default function LabPage() {
           </div>
           <div className="w-[100vw] relative left-1/2 -translate-x-1/2">
             <LabCarousel />
+          </div>
+        </motion.div>
+
+        {/* The Cinematic Video Reel */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="pt-24 border-t border-white/10 flex flex-col items-center justify-center relative w-full"
+        >
+          <div className="text-center mb-16">
+            <h2 className="text-sm tracking-[0.2em] text-white/50 uppercase mb-4">Cinematic Showcase</h2>
+            <h3 className="text-3xl md:text-5xl font-serif text-white font-light tracking-wide">Our Story in Motion</h3>
+          </div>
+          <div className="w-[100vw] relative left-1/2 -translate-x-1/2">
+            <LabVideoReel />
           </div>
         </motion.div>
         </div>
