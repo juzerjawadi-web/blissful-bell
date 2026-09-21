@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { StatsCounter } from "@/components/ui/stats-counter";
 
 const STATS = [
-  { value: "1000+", label: "Travellers" },
-  { value: "50+", label: "Destinations" },
-  { value: "10+", label: "Years of Experiences" },
-  { value: "∞", label: "Memories" }
+  { value: 1000, suffix: "+", label: "Travellers" },
+  { value: 50, suffix: "+", label: "Destinations" },
+  { value: 10, suffix: "+", label: "Years of Experiences" },
+  { value: "∞", label: "Memories", isString: true }
 ];
 
 export function VaultStats() {
@@ -24,7 +25,11 @@ export function VaultStats() {
               className="flex flex-col items-center justify-center"
             >
               <span className="text-4xl md:text-5xl lg:text-6xl font-serif text-white mb-4 tracking-wider font-light">
-                {stat.value}
+                {stat.isString ? (
+                  stat.value
+                ) : (
+                  <StatsCounter value={stat.value as number} suffix={stat.suffix} duration={2} />
+                )}
               </span>
               <span className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-white/40">
                 {stat.label}
