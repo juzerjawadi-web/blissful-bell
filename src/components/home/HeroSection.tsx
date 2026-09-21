@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { GlassCard } from "@/components/global/GlassCard";
+import { TextShimmerWave } from "@/components/core/text-shimmer-wave";
 import { useEffect, useState } from "react";
 
 export function HeroSection() {
@@ -101,51 +102,8 @@ export function HeroSection() {
           className="glass-card px-12 py-8 mb-8 rounded-[2rem] border border-white/10"
         >
           <h1 className="font-[var(--font-cormorant)] text-5xl md:text-7xl lg:text-8xl tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-pastel-pink/50 drop-shadow-sm font-light uppercase flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center">
-            <motion.span 
-              initial="hidden" 
-              animate="visible" 
-              variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-              }}
-              className="flex"
-            >
-              {"DURRIYA".split("").map((char, index) => (
-                <motion.span 
-                  key={index} 
-                  variants={{
-                    hidden: { opacity: 0, y: 40, rotateX: -90 },
-                    visible: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", damping: 12, stiffness: 100 } }
-                  }} 
-                  className="inline-block"
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.span>
-            
-            <motion.span 
-              initial="hidden" 
-              animate="visible" 
-              variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.4 } }
-              }}
-              className="flex"
-            >
-              {"JUZER".split("").map((char, index) => (
-                <motion.span 
-                  key={index} 
-                  variants={{
-                    hidden: { opacity: 0, y: 40, rotateX: -90 },
-                    visible: { opacity: 1, y: 0, rotateX: 0, transition: { type: "spring", damping: 12, stiffness: 100 } }
-                  }} 
-                  className="inline-block"
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.span>
+            <TextShimmerWave duration={2}>DURRIYA</TextShimmerWave>
+            <TextShimmerWave duration={2}>JUZER</TextShimmerWave>
           </h1>
         </motion.div>
 
@@ -156,7 +114,7 @@ export function HeroSection() {
         >
           <GlassCard className="px-12 py-8 mb-8 border border-white/10" variant="card">
             <p className="text-sm md:text-base tracking-[0.3em] text-white/70 uppercase">
-              Welcome to our universe
+              <TextShimmerWave duration={2}>Welcome to our universe</TextShimmerWave>
             </p>
           </GlassCard>
         </motion.div>
@@ -165,7 +123,7 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8, duration: 1 }}
-          className="flex items-center gap-4 text-xs md:text-sm text-pastel-pink/60 tracking-[0.2em] font-[var(--font-manrope)] font-light"
+          className="flex items-center gap-4 text-xs md:text-sm text-pastel-pink/60 tracking-[0.2em] font-[var(--font-manrope)] font-light flex-wrap justify-center"
         >
           <motion.span 
             animate={{ scale: [1, 1.2, 1] }} 
@@ -173,7 +131,7 @@ export function HeroSection() {
           >
             ♡
           </motion.span>
-          somewhere between you and me
+          <TextShimmerWave duration={2}>somewhere between you and me</TextShimmerWave>
           <motion.span 
             animate={{ scale: [1, 1.2, 1] }} 
             transition={{ duration: 2, repeat: Infinity, delay: 1 }}

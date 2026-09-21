@@ -12,6 +12,7 @@ import { AgentBentoGrid } from "@/components/ui/agent-bento-grid";
 import { ImageScatter } from "@/components/ui/image-scatter";
 import { LabCarousel } from "@/components/lab/LabCarousel";
 import { LabVideoReel } from "@/components/lab/LabVideoReel";
+import { TextShimmerWave } from "@/components/core/text-shimmer-wave";
 
 export default function LabPage() {
   const ref = useRef<HTMLDivElement>(null);
@@ -46,7 +47,7 @@ export default function LabPage() {
 
         <motion.header style={{ y: yText, opacity: opacityText }} className="text-center relative z-10">
           <h1 className="text-4xl md:text-6xl font-serif text-white font-light mb-6 tracking-wide drop-shadow-lg flex flex-wrap justify-center gap-4">
-            <TextAnimation divideBy="word" delay={0.2}>Made With Love</TextAnimation>
+            <TextShimmerWave duration={2}>Made With Love</TextShimmerWave>
           </h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +55,7 @@ export default function LabPage() {
             transition={{ delay: 0.5, duration: 1 }}
             className="text-white/80 tracking-widest text-sm max-w-md mx-auto uppercase drop-shadow-md"
           >
-            A little interactive playground for our universe
+            <TextShimmerWave duration={2}>A little interactive playground for our universe</TextShimmerWave>
           </motion.p>
         </motion.header>
       </section>
