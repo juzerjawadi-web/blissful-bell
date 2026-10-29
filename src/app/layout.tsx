@@ -31,8 +31,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Our Little Universe",
-  description: "Two people. One little universe.",
+  title: "Durriya I Love U",
+  description: "Durriya, I love you. Two people. One little universe.",
 };
 
 import { AuthProvider } from "@/components/global/AuthProvider";

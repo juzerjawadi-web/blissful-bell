@@ -20,8 +20,8 @@ export function Navigation() {
       
       {/* Desktop Logo (Hidden on mobile) */}
       <div className="hidden md:block pointer-events-auto">
-        <Link href="/" className="text-pastel-white/80 hover:text-white transition-colors duration-500 font-serif text-xl tracking-widest">
-          O L U
+        <Link href="/" className="text-pastel-white/80 hover:text-white transition-colors duration-500 font-serif text-lg tracking-widest uppercase">
+          Durriya I Love U
         </Link>
       </div>
 
