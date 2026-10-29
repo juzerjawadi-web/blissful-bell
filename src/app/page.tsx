@@ -26,6 +26,7 @@ export default function Home() {
           </div>
           <ImageTrail
             images={[
+              "/lovers.png",
               "/1760869483602.jpg",
               "/20260208_073639.jpg",
               "/20260503_202503.jpg",

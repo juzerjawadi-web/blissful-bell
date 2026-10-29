@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { GlassCard } from "../global/GlassCard";
 import { Sparkles, X } from "lucide-react";
 
@@ -36,17 +37,36 @@ export function PickABubble() {
   }, []);
 
   return (
-    <section className="py-32 relative px-4 flex flex-col items-center justify-center min-h-[60vh]">
+    <section className="py-36 md:py-48 relative px-4 flex flex-col items-center justify-center min-h-[85vh] overflow-hidden my-12">
+      {/* LOVER'S Background Image */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <Image
+          src="/lovers.png"
+          alt="Lover's"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center scale-105 transition-transform duration-1000"
+        />
+        {/* Soft atmospheric gradient overlays to integrate with dark page */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         className="text-center mb-16 relative z-10"
       >
-        <Sparkles className="w-6 h-6 text-pastel-yellow/60 mx-auto mb-6" />
-        <h2 className="text-3xl md:text-5xl font-serif text-white/90 tracking-wide font-light">
+        <Sparkles className="w-6 h-6 text-pastel-yellow/70 mx-auto mb-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />
+        <h2 className="text-3xl md:text-5xl font-serif text-white tracking-wide font-light drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
           Pick a Bubble
         </h2>
+        <p className="text-xs md:text-sm text-white/70 tracking-[0.25em] uppercase mt-3 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+          Whispers from our universe
+        </p>
       </motion.div>
 
       <div className="flex flex-wrap justify-center gap-6 max-w-3xl mx-auto relative z-10">
