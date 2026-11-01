@@ -95,6 +95,8 @@ export function ImageTrail({
   const safeMaxItems = Math.max(0, Math.floor(maxItems));
   const safeRotationRange = Math.max(0, rotationRange);
 
+  const boundsRef = React.useRef<{ left: number; top: number } | null>(null);
+
   React.useEffect(() => {
     const timeouts = timeoutRefs.current;
 
@@ -108,6 +110,11 @@ export function ImageTrail({
     setTrail((current) => current.filter((item) => item.id !== id));
   }, []);
 
+  const handlePointerEnter = React.useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    boundsRef.current = { left: rect.left, top: rect.top };
+  }, []);
+
   const handlePointerMove = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       onPointerMove?.(event);
@@ -116,7 +123,13 @@ export function ImageTrail({
         return;
       }
 
-      const bounds = event.currentTarget.getBoundingClientRect();
+      let bounds = boundsRef.current;
+      if (!bounds) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        bounds = { left: rect.left, top: rect.top };
+        boundsRef.current = bounds;
+      }
+
       const position = {
         x: event.clientX - bounds.left,
         y: event.clientY - bounds.top,
@@ -178,6 +191,7 @@ export function ImageTrail({
   const handlePointerLeave = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       lastPositionRef.current = null;
+      boundsRef.current = null;
       onPointerLeave?.(event);
     },
     [onPointerLeave]
@@ -186,6 +200,7 @@ export function ImageTrail({
   return (
     <div
       className={cn("relative overflow-hidden", className)}
+      onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       {...props}
@@ -197,13 +212,12 @@ export function ImageTrail({
           {trail.map((item) => (
             <motion.div
               key={item.id}
-              className="absolute"
-              style={{ left: item.x, top: item.y }}
-              initial={{ x: "-50%", y: "-50%", scale: 0.82, opacity: 0, rotate: item.rotation }}
-              animate={{ x: "-50%", y: "-50%", scale: 1, opacity: 1, rotate: item.rotation }}
+              className="absolute top-0 left-0 will-change-transform"
+              initial={{ x: `calc(${item.x}px - 50%)`, y: `calc(${item.y}px - 50%)`, scale: 0.82, opacity: 0, rotate: item.rotation }}
+              animate={{ x: `calc(${item.x}px - 50%)`, y: `calc(${item.y}px - 50%)`, scale: 1, opacity: 1, rotate: item.rotation }}
               exit={{
-                x: "-50%",
-                y: "-50%",
+                x: `calc(${item.x}px - 50%)`,
+                y: `calc(${item.y}px - 50%)`,
                 scale: 0.5,
                 opacity: 0,
                 rotate: item.rotation * 0.75,
@@ -216,6 +230,8 @@ export function ImageTrail({
                 src={item.src}
                 alt={item.alt}
                 draggable={false}
+                decoding="async"
+                loading="lazy"
                 className={cn(
                   "block aspect-[3/4] w-32 select-none rounded-sm object-cover shadow-2xl",
                   imageClassName

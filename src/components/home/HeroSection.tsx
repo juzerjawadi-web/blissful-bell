@@ -1,17 +1,32 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { GlassCard } from "@/components/global/GlassCard";
 import { TextShimmerWave } from "@/components/core/text-shimmer-wave";
 import { useEffect, useState } from "react";
 
 export function HeroSection() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMounted, setIsMounted] = useState(false);
   const [particles, setParticles] = useState<{
     initY: number; initX: number; initOpacity: number; initScale: number;
     animY: number; animOpacity: number; duration: number;
   }[]>([]);
+
+  // Compositor-driven motion values prevent full component re-renders during mouse moves
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springX = useSpring(mouseX, { stiffness: 45, damping: 25 });
+  const springY = useSpring(mouseY, { stiffness: 45, damping: 25 });
+
+  const bubble1X = useTransform(springX, (val) => val * -20);
+  const bubble1Y = useTransform(springY, (val) => val * -20);
+
+  const bubble2X = useTransform(springX, (val) => val * 30);
+  const bubble2Y = useTransform(springY, (val) => val * 30);
+
+  const cardRotateX = useTransform(springY, (val) => val * 5);
+  const cardRotateY = useTransform(springX, (val) => val * -5);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -36,14 +51,13 @@ export function HeroSection() {
       // Normalize mouse position between -1 and 1
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = (e.clientY / window.innerHeight) * 2 - 1;
-      setMousePosition({ x, y });
+      mouseX.set(x);
+      mouseY.set(y);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsMounted(true);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [mouseX, mouseY]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -65,20 +79,18 @@ export function HeroSection() {
       {/* Floating Background Bubbles */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
-          animate={{
-            x: mousePosition.x * -20,
-            y: mousePosition.y * -20,
+          style={{
+            x: bubble1X,
+            y: bubble1Y,
           }}
-          transition={{ type: "spring", stiffness: 50, damping: 30 }}
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-pastel-pink/10 rounded-full blur-[100px] mix-blend-screen"
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-pastel-pink/10 rounded-full blur-[100px] mix-blend-screen will-change-transform"
         />
         <motion.div
-          animate={{
-            x: mousePosition.x * 30,
-            y: mousePosition.y * 30,
+          style={{
+            x: bubble2X,
+            y: bubble2Y,
           }}
-          transition={{ type: "spring", stiffness: 40, damping: 25 }}
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pastel-lavender/10 rounded-full blur-[120px] mix-blend-screen"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pastel-lavender/10 rounded-full blur-[120px] mix-blend-screen will-change-transform"
         />
       </div>
 
@@ -90,16 +102,16 @@ export function HeroSection() {
         <motion.div 
           animate={{ 
             y: [0, -10, 0],
-            rotateX: mousePosition.y * 5,
-            rotateY: mousePosition.x * -5,
           }}
           transition={{ 
             y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-            rotateX: { type: "spring", stiffness: 100, damping: 30 },
-            rotateY: { type: "spring", stiffness: 100, damping: 30 }
           }}
-          style={{ perspective: 1000 }}
-          className="glass-card px-12 py-8 mb-8 rounded-[2rem] border border-white/10"
+          style={{ 
+            perspective: 1000,
+            rotateX: cardRotateX,
+            rotateY: cardRotateY,
+          }}
+          className="glass-card px-12 py-8 mb-8 rounded-[2rem] border border-white/10 will-change-transform"
         >
           <h1 className="font-[var(--font-cormorant)] text-5xl md:text-7xl lg:text-8xl tracking-[0.15em] text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-pastel-pink/50 drop-shadow-sm font-light uppercase flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center">
             <TextShimmerWave duration={2}>DURRIYA</TextShimmerWave>

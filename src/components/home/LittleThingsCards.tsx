@@ -21,6 +21,7 @@ import Image from "next/image";
 function LittleThingCard({ thing }: { thing: { id: number; text: string; image?: string; audio?: string } }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isClicked, setIsClicked] = useState(false);
+  const rectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
   
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -31,13 +32,18 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Cache bounds once on enter to avoid layout thrashing on every mousemove
+    const rect = e.currentTarget.getBoundingClientRect();
+    rectRef.current = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+
     if (audioRef.current) {
       audioRef.current.play().catch(() => {});
     }
   };
 
   const handleMouseLeave = () => {
+    rectRef.current = null;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -66,13 +72,14 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const width = rect.width;
-        const height = rect.height;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const xPct = mouseX / width - 0.5;
-        const yPct = mouseY / height - 0.5;
+        let rect = rectRef.current;
+        if (!rect) {
+          const r = e.currentTarget.getBoundingClientRect();
+          rect = { left: r.left, top: r.top, width: r.width, height: r.height };
+          rectRef.current = rect;
+        }
+        const xPct = (e.clientX - rect.left) / (rect.width || 1) - 0.5;
+        const yPct = (e.clientY - rect.top) / (rect.height || 1) - 0.5;
         x.set(xPct);
         y.set(yPct);
       }}
@@ -88,7 +95,7 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
         <span className={`text-pastel-pink/50 text-sm transition-transform duration-500 ${isClicked ? "scale-125" : "group-hover:scale-125"}`}>♡</span>
       </GlassCard>
 
-      {thing.audio && <audio ref={audioRef} src={thing.audio} preload="auto" />}
+      {thing.audio && <audio ref={audioRef} src={thing.audio} preload="none" />}
 
       {thing.image && (
         <div 
@@ -98,7 +105,7 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
         >
           <motion.div 
             style={{ rotateX, rotateY }}
-            className={`relative transition-transform duration-700 ease-out ${
+            className={`relative transition-transform duration-700 ease-out will-change-transform ${
               isClicked ? "scale-100" : "scale-95 md:group-hover:scale-100"
             }`}
           >
@@ -107,6 +114,8 @@ function LittleThingCard({ thing }: { thing: { id: number; text: string; image?:
               alt={thing.text} 
               width={800}
               height={800}
+              loading="lazy"
+              sizes="(max-width: 768px) 90vw, 800px"
               style={{ width: "auto", height: "auto", maxWidth: "90vw", maxHeight: "80vh" }}
               className="object-contain rounded-2xl shadow-[0_40px_80px_rgba(0,0,0,0.8)] border border-white/10"
             />

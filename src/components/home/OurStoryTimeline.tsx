@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { GlassCard } from "../global/GlassCard";
 import { Heart } from "lucide-react";
 import { useRef } from "react";
@@ -20,8 +20,6 @@ export function OurStoryTimeline() {
     offset: ["start center", "end end"]
   });
 
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
   return (
     <section ref={containerRef} className="py-32 relative px-4 md:px-12 w-full">
       <div className="max-w-4xl mx-auto relative">
@@ -36,10 +34,10 @@ export function OurStoryTimeline() {
 
         {/* Vertical Line Container */}
         <div className="absolute left-[50%] top-[200px] bottom-0 w-px bg-gradient-to-b from-white/20 via-white/10 to-transparent hidden md:block -translate-x-1/2 overflow-hidden">
-          {/* Scroll Progress Filled Line */}
+          {/* Scroll Progress Filled Line - scaleY compositor transform eliminates scroll layout thrashing */}
           <motion.div 
-            style={{ height: lineHeight }}
-            className="w-full bg-gradient-to-b from-white to-pastel-pink shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+            style={{ scaleY: scrollYProgress, transformOrigin: "top" }}
+            className="w-full h-full bg-gradient-to-b from-white to-pastel-pink shadow-[0_0_10px_rgba(255,255,255,0.5)] will-change-transform"
           />
         </div>
 

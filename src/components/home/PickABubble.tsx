@@ -44,7 +44,7 @@ export function PickABubble() {
           src="/lovers.png"
           alt="Lover's"
           fill
-          priority
+          loading="lazy"
           sizes="100vw"
           className="object-cover object-center scale-105 transition-transform duration-1000"
         />

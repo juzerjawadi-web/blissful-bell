@@ -183,6 +183,7 @@ export function Card1() {
     const steps: ActiveStep[] = ["request", "router", "agent", "memory", "tools", "response"];
     let idx = 0;
     const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
       idx = (idx + 1) % steps.length;
       setStep(steps[idx]);
     }, 2000);
@@ -334,6 +335,7 @@ export function Card2() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
       setActiveIdx((prev) => (prev === 0 ? 1 : 0));
     }, 3000);
     return () => clearInterval(interval);
@@ -496,6 +498,7 @@ export function Card3() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
       setActiveIdx((prev) => (prev + 1) % logs.length);
     }, 2400);
     return () => clearInterval(interval);
@@ -633,6 +636,7 @@ export function Card4() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
       setTick((prev) => (prev + 1) % RETRIEVAL_QUERIES.length);
     }, 2000);
     return () => clearInterval(interval);

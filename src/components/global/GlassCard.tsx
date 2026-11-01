@@ -50,7 +50,7 @@ export function GlassCard({
       {/* Inner Card Body */}
       <div 
         className={cn(
-          "relative z-10 w-full h-full bg-black/60 backdrop-blur-2xl flex flex-col",
+          "relative z-10 w-full h-full bg-black/60 flex flex-col",
           isBubble ? "rounded-full" : "rounded-[calc(1.5rem-2px)]"
         )}
       >

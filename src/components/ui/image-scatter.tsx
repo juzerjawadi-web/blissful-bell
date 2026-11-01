@@ -46,14 +46,14 @@ export function ImageScatter({
     const gallery = galleryRef.current;
     const galleryHeading = headingRef.current;
 
-    let viewport = {
+    const viewport = {
       centerX: containerRef.current.clientWidth / 2,
       centerY: containerRef.current.clientHeight / 2,
       rangeMin: Math.min(containerRef.current.clientWidth, containerRef.current.clientHeight) * 0.35,
       rangeMax: Math.min(containerRef.current.clientWidth, containerRef.current.clientHeight) * 0.7,
     };
 
-    let state = {
+    const state = {
       activeCards: [] as { element: HTMLDivElement; centerX: number; centerY: number }[],
       currentSection: 0,
       isAnimating: false,
@@ -132,9 +132,10 @@ export function ImageScatter({
         const centerY = viewport.centerY + Math.sin(angle) * radius;
 
         gsap.set(card, {
-          left: centerX - cardWidth / 2,
-          top: centerY - cardHeight / 2,
+          x: centerX - cardWidth / 2,
+          y: centerY - cardHeight / 2,
           rotation: Math.random() * 50 - 25,
+          force3D: true,
         });
 
         gallery.appendChild(card);
@@ -173,11 +174,12 @@ export function ImageScatter({
         tl.to(
           element,
           {
-            left: targetEdge.x,
-            top: targetEdge.y,
+            x: targetEdge.x,
+            y: targetEdge.y,
             rotation: Math.random() * 180 - 90,
             duration: animationDuration,
             ease: "power2.in",
+            force3D: true,
             onComplete: () => element.remove(),
           },
           0
@@ -187,19 +189,21 @@ export function ImageScatter({
       enteringCards.forEach(({ element, centerX, centerY }) => {
         const targetEdge = getEdgePosition(centerX, centerY);
         gsap.set(element, {
-          left: targetEdge.x,
-          top: targetEdge.y,
+          x: targetEdge.x,
+          y: targetEdge.y,
           rotation: Math.random() * 180 - 90,
+          force3D: true,
         });
 
         tl.to(
           element,
           {
-            left: centerX - cardWidth / 2,
-            top: centerY - cardHeight / 2,
+            x: centerX - cardWidth / 2,
+            y: centerY - cardHeight / 2,
             rotation: Math.random() * 50 - 25,
             duration: animationDuration,
             ease: "power2.out",
+            force3D: true,
           },
           animationOverlap
         );
@@ -225,8 +229,6 @@ export function ImageScatter({
     galleryHeading.textContent = data[0]?.heading || "";
     gsap.set(galleryHeading, { opacity: 1 });
 
-    let intervalId: NodeJS.Timeout;
-
     function nextSection() {
       if (state.isAnimating) return;
 
@@ -245,7 +247,7 @@ export function ImageScatter({
       });
     }
 
-    intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
       if (document.visibilityState === "visible" && state.isVisible) {
         nextSection();
       }
@@ -265,6 +267,7 @@ export function ImageScatter({
     return () => {
       window.removeEventListener("resize", handleResize);
       clearInterval(intervalId);
+      observer.disconnect();
       state.activeCards.forEach(({ element }) => element.remove());
     };
   }, [data, cardWidth, cardHeight, animationDuration, animationOverlap, headingFadeDuration]);
